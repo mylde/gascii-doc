@@ -1,0 +1,18 @@
+:toc:
+
+= title
+
+////
+link:swagger/api{outfilesuffix}[api] +
+////
+
+link:sub{outfilesuffix}[sub] +
+
+include::partial.adoc[]
+
+[plantuml]
+----
+include::pu/seq.pu[]
+----
+
+== h2 a

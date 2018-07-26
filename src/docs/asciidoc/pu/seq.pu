@@ -1,0 +1,19 @@
+@startuml
+
+actor Actor
+participant participant1
+participant participant2
+
+Actor -> participant1
+activate Actor
+activate participant1
+participant1 -> participant2
+activate participant2
+participant2 -> participant2
+participant1 <-- participant2
+deactivate participant2
+Actor <-- participant1
+deactivate participant1
+deactivate Actor
+
+@enduml
