@@ -1,0 +1,29 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.8'
+        classpath group: 'org.asciidoctor', name: 'asciidoctorj-diagram', version: '1.5.8'
+        classpath group: 'org.asciidoctor', name: 'asciidoctorj-pdf', version: '1.5.0-alpha.16'
+        classpath 'com.github.jruby-gradle:jruby-gradle-plugin:1.5.0'
+    }
+}
+
+apply plugin: 'org.asciidoctor.convert'
+apply plugin: 'com.github.jruby-gradle.base'
+
+asciidoctor {
+    backends = ['html5', 'pdf']
+    requires = ['asciidoctor-diagram']
+    outputDir = file('build/docs')
+    attributes (
+            'imagesdir' : "$rootDir/build/docs/images",
+            'toc-title' : '\u76EE\u6B21',
+            'numbered' : true,
+            'allow-uri-read': true
+    )
+}
+
+defaultTasks 'asciidoctor'
