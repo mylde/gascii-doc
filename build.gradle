@@ -1,29 +1,53 @@
 buildscript {
-    repositories {
-        jcenter()
-    }
+  repositories {
+    jcenter()
+  }
 
-    dependencies {
-        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.8'
-        classpath group: 'org.asciidoctor', name: 'asciidoctorj-diagram', version: '1.5.8'
-        classpath group: 'org.asciidoctor', name: 'asciidoctorj-pdf', version: '1.5.0-alpha.16'
-        classpath 'com.github.jruby-gradle:jruby-gradle-plugin:1.5.0'
-    }
+  dependencies {
+    classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.3'
+    classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.10.1'
+    classpath 'io.github.swagger2markup:swagger2markup-gradle-plugin:1.3.3'
+  }
 }
 
 apply plugin: 'org.asciidoctor.convert'
-apply plugin: 'com.github.jruby-gradle.base'
+apply plugin: 'io.github.swagger2markup'
+
+repositories {
+  jcenter()
+}
+
+dependencies {
+  asciidoctor 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.8'
+  asciidoctor 'org.asciidoctor:asciidoctorj-diagram:1.5.8'
+  asciidoctor 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.16'
+}
+
+task cleanSwag(type :Delete) {
+  dependsOn clean
+  setDelete file("$rootDir/src/docs/asciidoc/swagger").listFiles().findAll{it.name.endsWith('adoc')}
+}
+
+convertSwagger2markup {
+  dependsOn cleanSwag
+  swaggerInput "${rootDir}/src/swagger/api.yml"
+  outputDir file("${rootDir}/src/docs/asciidoc/swagger")
+//  config = [
+//    'swagger2markup.pathsGroupedBy' : 'TAGS'
+//  ]
+}
 
 asciidoctor {
-    backends = ['html5', 'pdf']
-    requires = ['asciidoctor-diagram']
-    outputDir = file('build/docs')
-    attributes (
-            'imagesdir' : "$rootDir/build/docs/images",
-            'toc-title' : '\u76EE\u6B21',
-            'numbered' : true,
-            'allow-uri-read': true
-    )
+  dependsOn convertSwagger2markup
+  backends = ['html5', 'pdf']
+  requires = ['asciidoctor-diagram']
+  outputDir = file("${buildDir}/docs")
+  attributes (
+    'imagesdir' : "${rootDir}/build/docs/images",
+    'toc-title' : 'Table of Contents',
+    'numbered' : true,
+    'allow-uri-read': true
+  )
 }
 
 defaultTasks 'asciidoctor'
